@@ -1,5 +1,5 @@
 import axios from "axios";
-import NextAuth, { DefaultUser, NextAuthOptions, User } from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import Google from "next-auth/providers/google";
 
 export const authOptions: NextAuthOptions = {
@@ -13,7 +13,9 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ profile, user }) {
       const userDetails = (
-        await axios.get("http://localhost:3001/user?email=" + profile?.email)
+        await axios.get(
+          process.env.NEXT_PUBLIC_BACKEND_URL + "/user?email=" + profile?.email
+        )
       ).data.payload;
       if (userDetails) {
         Object.assign(user, { ...user, ...userDetails });
