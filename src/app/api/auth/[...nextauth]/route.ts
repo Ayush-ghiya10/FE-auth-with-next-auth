@@ -1,3 +1,4 @@
+import { signJwt } from "@/utils/jwtHandler";
 import axios from "axios";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import Google from "next-auth/providers/google";
@@ -7,39 +8,35 @@ export const authOptions: NextAuthOptions = {
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID ?? "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code",
+        },
+      },
     }),
   ],
+  session: {
+    strategy: "jwt",
+  },
   pages: { signIn: "/signin" },
-  callbacks: {
-    async signIn({ profile, user }) {
-      const userDetails = (
-        await axios.get(
-          process.env.NEXT_PUBLIC_BACKEND_URL + "/user?email=" + profile?.email
-        )
-      ).data.payload;
-      if (userDetails) {
-        Object.assign(user, { ...user, ...userDetails });
-        return true;
-      } else {
-        return false;
-      }
-    },
 
-    async jwt({ token, user }) {
-      if (user) {
-        token = {
-          ...token,
-          ...user,
-        };
+  callbacks: {
+    async jwt({ token, account }) {
+      if (account) {
+        token.auth_token = await signJwt({
+          sub: token.sub,
+          id_token: account.id_token,
+          access_token: account.access_token,
+          expires_at: account.expires_at,
+        });
       }
       return token;
     },
-
-    session({ session, token }) {
-      return {
-        ...session,
-        ...token,
-      };
+    async session({ session, token }) {
+      session.auth_token = token.auth_token as string;
+      return session;
     },
   },
 };
