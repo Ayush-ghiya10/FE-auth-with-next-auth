@@ -5,6 +5,7 @@ import Paper, { PaperProps } from "@mui/material/Paper";
 import Draggable from "react-draggable";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import axiosInstance from "@/utils/axiosInstance";
 function PaperComponent(props: PaperProps) {
   return (
     <Draggable
@@ -85,15 +86,11 @@ const FormDialog = ({
           <button
             className="whitespace-nowrap rounded-md bg-blue-500 px-4 py-3 font-medium text-white"
             onClick={async () => {
-              const res = await axios.post(
-                process.env.NEXT_PUBLIC_BACKEND_URL + "/user/admin/add",
-                {
-                  email,
-                  firstName,
-                  lastName,
-                  userId: data?.userId,
-                }
-              );
+              const res = await axiosInstance.post("/user/admin/add", {
+                email,
+                firstName,
+                lastName,
+              });
             }}
           >
             Add User

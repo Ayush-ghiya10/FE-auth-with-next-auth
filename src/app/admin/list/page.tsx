@@ -12,18 +12,19 @@ import Paper from "@mui/material/Paper";
 import { IoMdHome } from "react-icons/io";
 import { useRouter } from "next/navigation";
 import FormDialog from "./form-dialog";
+import { Button } from "@mui/material";
+import DeleteUserDialog from "./delete-dialog";
+import axiosInstance from "@/utils/axiosInstance";
 
 const Page = () => {
   const [adminList, setAdminList] = useState<Array<any>>([]);
   const router = useRouter();
   const [modalState, setModalState] = useState(false);
+  const [deleteModalState, setDeleteModalState] = useState(false);
+  const [deleteuserId, setDeleteuserId] = useState("");
   const getAdminList = async () => {
     try {
-      const resData = (
-        await axios.get(
-          process.env.NEXT_PUBLIC_BACKEND_URL + "/user/admin/list"
-        )
-      ).data;
+      const resData = (await axiosInstance.get("/user/admin/list")).data;
       return resData;
     } catch (error) {
       return null;
@@ -94,13 +95,28 @@ const Page = () => {
                 <TableCell align="left">{row.LastName}</TableCell>
                 <TableCell align="left">{row.Email}</TableCell>
                 <TableCell align="left">{row.Username}</TableCell>
-                <TableCell align="left">{row.UserID}</TableCell>
+                <TableCell align="left">
+                  {row.UserID}
+                  <Button
+                    onClick={(e) => {
+                      setDeleteuserId(row.UserID);
+                      setDeleteModalState(true);
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
       <FormDialog modalState={modalState} setModalState={setModalState} />
+      <DeleteUserDialog
+        modalState={deleteModalState}
+        setModalState={setDeleteModalState}
+        userID={deleteuserId}
+      />
     </div>
   );
 };

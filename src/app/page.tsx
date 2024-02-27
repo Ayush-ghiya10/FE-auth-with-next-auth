@@ -29,14 +29,9 @@ export default function IndexPage() {
           <button
             className="mr-5 bg-[#601EF0] text-white py-2 px-5 rounded mt-10"
             onClick={async () => {
-              const token = jwt.sign("data", "secret", {}, (err, token) => {
-                console.log(err);
-                console.log(token);
-              });
-              console.log(token);
               const res = await axios.post(
                 process.env.NEXT_PUBLIC_BACKEND_URL + "/user/verifytoken",
-                { token }
+                { token: data.auth_token }
               );
             }}
           >
