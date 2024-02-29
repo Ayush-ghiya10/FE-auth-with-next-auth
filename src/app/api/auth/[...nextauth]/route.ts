@@ -15,7 +15,6 @@ export const authOptions: NextAuthOptions = {
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID ?? "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
-
       authorization: {
         params: {
           prompt: "select_account",
@@ -60,8 +59,8 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
-    async session({ session, token, newSession, user }) {
-      console.log({ newSession, user, test: "asdf" });
+    async session({ session, token, newSession, user, trigger }) {
+      console.log({ session, token, newSession, user, trigger });
       session.auth_token = token.auth_token as string;
       return session;
     },

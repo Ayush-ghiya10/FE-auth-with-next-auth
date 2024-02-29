@@ -1,6 +1,5 @@
 "use client";
 
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -15,26 +14,40 @@ import FormDialog from "./form-dialog";
 import { Button } from "@mui/material";
 import DeleteUserDialog from "./delete-dialog";
 import axiosInstance from "@/utils/axiosInstance";
+import { ResponseUser } from "userTest";
+import { useQuery } from "@tanstack/react-query";
+import ProjectDialog from "./project-view-dialog";
 
 const Page = () => {
-  const [adminList, setAdminList] = useState<Array<any>>([]);
+  const [adminList, setAdminList] = useState<Array<ResponseUser> | null>([]);
   const router = useRouter();
   const [modalState, setModalState] = useState(false);
   const [deleteModalState, setDeleteModalState] = useState(false);
   const [deleteuserId, setDeleteuserId] = useState("");
-  const getAdminList = async () => {
-    try {
-      const resData = (await axiosInstance.get("/user/admin/list")).data;
-      return resData;
-    } catch (error) {
-      return null;
-    }
-  };
-  useEffect(() => {
-    getAdminList().then((value) => {
-      setAdminList(value);
-    });
-  }, []);
+  const [viewProject, setViewProject] = useState(false);
+  const { data, isLoading, isError } = useQuery<ResponseUser[]>({
+    queryKey: ["adminlist"],
+    queryFn: () =>
+      axiosInstance
+        .get<ResponseUser[]>("/user/admin/list")
+        .then((res) => res.data),
+  });
+
+  // const getAdminList = async () => {
+  //   try {
+  //     const resData = (
+  //       await axiosInstance.get<ResponseUser[]>("/user/admin/list")
+  //     ).data;
+  //     return resData;
+  //   } catch (error) {
+  //     return null;
+  //   }
+  // };
+  // useEffect(() => {
+  //   getAdminList().then((value) => {
+  //     setAdminList(value);
+  //   });
+  // }, []);
   return (
     <div className="h-full w-full py-3">
       <div className="w-full flex items-center justify-between my-5">
@@ -79,35 +92,43 @@ const Page = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {adminList.map((row, index) => (
-              <TableRow
-                key={row.UserID}
-                sx={{
-                  "&:last-child td, &:last-child th": { border: 0 },
-                }}
-                className="even:bg-gray-100"
-              >
-                <TableCell component="th" scope="row">
-                  {index + 1}
-                </TableCell>
+            {data &&
+              data.map((row, index) => (
+                <TableRow
+                  key={row.UserID}
+                  sx={{
+                    "&:last-child td, &:last-child th": { border: 0 },
+                  }}
+                  className="even:bg-gray-100"
+                >
+                  <TableCell component="th" scope="row">
+                    {index + 1}
+                  </TableCell>
 
-                <TableCell align="left">{row.FirstName}</TableCell>
-                <TableCell align="left">{row.LastName}</TableCell>
-                <TableCell align="left">{row.Email}</TableCell>
-                <TableCell align="left">{row.Username}</TableCell>
-                <TableCell align="left">
-                  {row.UserID}
-                  <Button
-                    onClick={(e) => {
-                      setDeleteuserId(row.UserID);
-                      setDeleteModalState(true);
-                    }}
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+                  <TableCell align="left">{row.FirstName}</TableCell>
+                  <TableCell align="left">{row.LastName}</TableCell>
+                  <TableCell align="left">{row.Email}</TableCell>
+                  <TableCell align="left">{row.Username}</TableCell>
+                  <TableCell align="left">
+                    {row.UserID}
+                    <Button
+                      onClick={(e) => {
+                        setViewProject(true);
+                      }}
+                    >
+                      View
+                    </Button>
+                    <Button
+                      onClick={(e) => {
+                        setDeleteuserId(row.UserID);
+                        setDeleteModalState(true);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>
@@ -117,6 +138,7 @@ const Page = () => {
         setModalState={setDeleteModalState}
         userID={deleteuserId}
       />
+      <ProjectDialog modalState={viewProject} setModalState={setViewProject} />
     </div>
   );
 };
