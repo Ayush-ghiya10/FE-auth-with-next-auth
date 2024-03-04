@@ -1,6 +1,6 @@
 import axios from "axios";
-import { getSession } from "next-auth/react";
 import toast from "react-hot-toast";
+import Cookies from "js-cookie";
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
@@ -28,11 +28,10 @@ axiosInstance.interceptors.response.use(
 
 axiosInstance.interceptors.request.use(
   async (config) => {
-    console.log(await getSession({}));
-    const session = await getSession();
-    if (session) {
+    const token = Cookies.get("token");
+    if (token) {
       // eslint-disable-next-line no-param-reassign
-      config.headers.Authorization = `Bearer ${session?.auth_token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },

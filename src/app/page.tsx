@@ -1,18 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { useSession } from "next-auth/react";
+
 import { useRouter } from "next/navigation";
 import Navbar from "./components/Navbar";
-import { jwtDecode } from "jwt-decode";
-import * as jwt from "jsonwebtoken";
-import Cookies from "js-cookie";
-import axios from "axios";
 
 export default function IndexPage() {
-  const { data, status } = useSession();
-  console.log(data);
   const router = useRouter();
-  return data && data.user ? (
+  return (
     <>
       <Navbar />
       <div className="w-full h-full">
@@ -26,21 +20,8 @@ export default function IndexPage() {
           >
             Show Admin List
           </button>
-          <button
-            className="mr-5 bg-[#601EF0] text-white py-2 px-5 rounded mt-10"
-            onClick={async () => {
-              const res = await axios.post(
-                process.env.NEXT_PUBLIC_BACKEND_URL + "/user/verifytoken",
-                { token: data.auth_token }
-              );
-            }}
-          >
-            Verify Token
-          </button>
         </div>
       </div>
     </>
-  ) : (
-    <p>loading</p>
   );
 }

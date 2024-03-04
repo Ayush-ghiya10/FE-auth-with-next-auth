@@ -13,6 +13,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.15.10",
     "@next-auth/upstash-redis-adapter": "^3.0.4",
+    "@react-oauth/google": "^0.12.1",
     "@tanstack/react-query": "^5.24.1",
     "@tanstack/react-query-devtools": "^5.24.1",
     "@types/js-cookie": "^3.0.6",

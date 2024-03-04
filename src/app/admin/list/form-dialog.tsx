@@ -3,8 +3,6 @@ import { useState } from "react";
 import { IoClose } from "react-icons/io5";
 import Paper, { PaperProps } from "@mui/material/Paper";
 import Draggable from "react-draggable";
-import axios from "axios";
-import { useSession } from "next-auth/react";
 import axiosInstance from "@/utils/axiosInstance";
 function PaperComponent(props: PaperProps) {
   return (
@@ -26,7 +24,7 @@ const FormDialog = ({
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const { data } = useSession();
+
   return (
     <Dialog
       open={modalState}

@@ -9,6 +9,7 @@ declare global {
       NEXT_PUBLIC_BACKEND_URL: string;
       NEXT_PUBLIC_REDIS_URL: string;
       NEXT_PUBLIC_REDIS_TOKEN: string;
+      NEXT_PUBLIC_GOOGLE_CLIENT_ID: string;
     }
   }
 }
